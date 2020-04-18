@@ -1,0 +1,1 @@
+The crime data as extracted by `get_raw_data.py` is pretty messy, as it is extracted from PDFs using `tabula`. Once we have the messy data in `crime_data_unclean.py` we will use OpenRefine to clean it up, fill in any missing data by hand, and geo-code the locations.
