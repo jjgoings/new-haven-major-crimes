@@ -8,9 +8,10 @@ from itertools import compress
 from datetime import date
 from bokeh.plotting import figure, output_file, show, ColumnDataSource, curdoc
 from bokeh.tile_providers import get_provider, Vendors
-from bokeh.layouts import row, column, widgetbox
-from bokeh.models import ColumnDataSource, CategoricalColorMapper, HoverTool, DateRangeSlider
+from bokeh.layouts import row, column, widgetbox, layout
+from bokeh.models import ColumnDataSource, CategoricalColorMapper, HoverTool, DateRangeSlider, CheckboxGroup, CustomJS, Select, MultiChoice, MultiSelect, CheckboxButtonGroup, Paragraph, Div 
 from bokeh.models.widgets import Select, Slider
+from bokeh.models.annotations import Legend
 
 sns.set_color_codes()
 
@@ -36,9 +37,21 @@ gdata = geopandas.GeoDataFrame(
 gdata.crs = "EPSG:4326"
 gdata = gdata.to_crs(epsg=3857)
 
-# For now, color by district (ten of them in New Haven)
-clrs = sns.color_palette('husl', n_colors=10).as_hex()
-label_color = [clrs[l-1] for l in gdata.DISTRICT.values]
+# For now, color by type of major crime  
+crime_types = gdata.CHRG_DESC.unique()
+clrs = sns.color_palette('husl', n_colors=len(crime_types)).as_hex()
+# map each unique crime to an integer so we can match it with a color
+clr_dict = {crime_types[i] : i for i in range(0,len(crime_types))}
+label_color = [clrs[clr_dict[l]] for l in gdata.CHRG_DESC.values]
+
+#crime_select = Select(title="Crime", value="All",
+#               options=['All']+list(crime_types))
+crime_select = MultiChoice(title="Crime Type:", value=list(crime_types),
+               options=list(crime_types),height=400)#,background=clrs)
+
+#print(crime_select)
+#print(dir(crime_select))
+
 
 source = ColumnDataSource(data=dict(
     x=gdata.geometry.x,
@@ -49,8 +62,6 @@ source = ColumnDataSource(data=dict(
     color=label_color,
 ))
 
-
-
 # Creating the figure
 tile_provider = get_provider(Vendors.CARTODBPOSITRON)
 
@@ -60,27 +71,30 @@ TOOLTIPS = [
     ("Description", "@desc"),
 ]
 
-#my_hover = HoverTool()
-#my_hover.tooltips = [('Address of the point', '@address')]
 # range bounds supplied in web mercator coordinates
-p = figure(x_range=(-8126000, -8110000), y_range=(5051000, 5062000),
-           x_axis_type="mercator", y_axis_type="mercator", tooltips=TOOLTIPS)
+p = figure(x_range=(-8126000, -8110000), y_range=(5049000, 5065000),
+           x_axis_type="mercator", y_axis_type="mercator", tooltips=TOOLTIPS, title='Major Crime in New Haven, CT from %s to %s' % (gdata.index.min().strftime('%d %b %Y'),gdata.index.max().strftime('%d %b %Y')),
+           plot_height=600,plot_width=800)
 p.add_tile(tile_provider)
 
-p.circle(x='x', y='y', source=source, size=8, alpha=0.7,line_color='black',fill_color='color') 
+p.circle(x='x', y='y', source=source, size=8, alpha=0.8,line_color='black',fill_color='color') 
 
-#TOOLTIPS = """
-#    <div style="width:300px;">
-#    @tweet
-#    </div>
-#    """
+# add custom legend
+items = []
+for i,name in enumerate(crime_types):
+    items += [(name,[p.circle(i,i,color=clrs[i],size=8,alpha=0.8,line_color='black')])]
+legend = Legend(items=items)
+p.add_layout(legend,'center')
+p.legend.location='bottom_left'
 
-#show(p)
 
 def update_plot(attr, old, new):
     #Update glyph locations
     time = range_slider.value_as_datetime
-    mask = (gdata.index >= time[0]) & (gdata.index <= time[1])
+    crime = crime_select.value 
+    p.title.text = 'Major Crime in New Haven, CT from %s to %s' % (time[0].strftime('%d %b %Y'),time[1].strftime('%d %b %Y')) 
+    p.title.align = "left"
+    mask = (gdata.index >= time[0]) & (gdata.index <= time[1]) & (gdata.CHRG_DESC.isin(crime))
     new_data = {
         'x': gdata.loc[mask].geometry.x, 
         'y': gdata.loc[mask].geometry.y, 
@@ -95,10 +109,30 @@ def update_plot(attr, old, new):
 start_date = gdata.index.min()
 end_date = gdata.index.max()
 
-range_slider = DateRangeSlider(start=start_date, end=end_date, value=(start_date, end_date), step=24*60*60*1000, title="Date Range", callback_policy = 'mouseup', tooltips = False, width=600)
+range_slider = DateRangeSlider(start=start_date, end=end_date, value=(start_date, end_date), step=24*60*60*1000, title="Date Range", tooltips = False, width=800)
+
+
+legend_button = CheckboxButtonGroup(
+        labels=["Show Legend"], active=[0])
+
+def change_click(attr,old,new):
+    p.legend.visible = not(p.legend.visible)
 
 range_slider.on_change('value',update_plot)
+crime_select.on_change('value',update_plot)
+legend_button.on_change('active',change_click)
 
-layout = column(p,widgetbox(range_slider))
+text = Paragraph(text="""
+""",
+width=200, height=100)
+
+attribution = Div(text="""
+&copy; 2020 Joshua Goings. Data from the <a href="https://www.newhavenct.gov/gov/depts/nhpd/compstat_reports.htm">New Haven Police Department</a>. Last updated 18 Apr 2020.
+""",
+width=800, height=20,style={'font-size': '80%', 'color': 'gray'})
+
+widgets = column(text,crime_select,legend_button,width=300)
+layout = layout([[p,widgets],[range_slider],[attribution]])
+
 curdoc().add_root(layout)
 show(layout)

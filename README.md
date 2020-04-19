@@ -7,6 +7,6 @@ Tools to get and process the crime data in New Haven, CT as provided by the NHPD
    The "unclean" data is the processed using OpenRefine, and geo-tagged according to the street location.  
    The final, cleaned and geotagged data is in `crime_data_clean.csv`.
 3. `explore_data` has some scripts to look at trends in the data (work in progress).
-4. `crime_map` contains a script to plot the crime data n New Haven and filter by date. 
+4. `crime_map` contains a script to plot the crime data in New Haven and filter by date. 
 
 
