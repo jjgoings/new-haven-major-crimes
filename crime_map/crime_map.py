@@ -13,7 +13,7 @@ from bokeh.models.widgets import Select, Slider
 from bokeh.models.annotations import Legend
 
 
-data = pd.read_csv('../clean_data/crime_data_clean.csv')
+data = pd.read_csv('./clean_data/crime_data_clean.csv')
 
 # Clean up some types and formats
 data['CASE_NUMBER'] = data['CASE_NUMBER'].astype('Int64')
