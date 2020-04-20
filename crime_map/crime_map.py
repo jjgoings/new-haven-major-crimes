@@ -129,4 +129,5 @@ widgets = column(text,crime_select,legend_button,width=300)
 layout = layout([[p,widgets],[range_slider],[attribution]])
 
 curdoc().add_root(layout)
+curdoc().title="Crime in New Haven, CT"
 #show(layout)
