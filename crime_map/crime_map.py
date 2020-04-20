@@ -1,6 +1,5 @@
 import numpy as np
 import string
-import matplotlib.pyplot as plt
 import pandas as pd
 import geopandas
 import seaborn as sns
@@ -13,7 +12,6 @@ from bokeh.models import ColumnDataSource, CategoricalColorMapper, HoverTool, Da
 from bokeh.models.widgets import Select, Slider
 from bokeh.models.annotations import Legend
 
-sns.set_color_codes()
 
 data = pd.read_csv('../clean_data/crime_data_clean.csv')
 
@@ -39,7 +37,7 @@ gdata = gdata.to_crs(epsg=3857)
 
 # For now, color by type of major crime  
 crime_types = gdata.CHRG_DESC.unique()
-clrs = sns.color_palette('husl', n_colors=len(crime_types)).as_hex()
+clrs = sns.color_palette('Paired', n_colors=len(crime_types)).as_hex()
 # map each unique crime to an integer so we can match it with a color
 clr_dict = {crime_types[i] : i for i in range(0,len(crime_types))}
 label_color = [clrs[clr_dict[l]] for l in gdata.CHRG_DESC.values]
@@ -47,11 +45,7 @@ label_color = [clrs[clr_dict[l]] for l in gdata.CHRG_DESC.values]
 #crime_select = Select(title="Crime", value="All",
 #               options=['All']+list(crime_types))
 crime_select = MultiChoice(title="Crime Type:", value=list(crime_types),
-               options=list(crime_types),height=400)#,background=clrs)
-
-#print(crime_select)
-#print(dir(crime_select))
-
+               options=list(crime_types),height=400)
 
 source = ColumnDataSource(data=dict(
     x=gdata.geometry.x,
@@ -135,4 +129,4 @@ widgets = column(text,crime_select,legend_button,width=300)
 layout = layout([[p,widgets],[range_slider],[attribution]])
 
 curdoc().add_root(layout)
-show(layout)
+#show(layout)
