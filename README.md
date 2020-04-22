@@ -2,9 +2,11 @@
 
 You can explore the New Haven crime data yourself with this [interactive crime map](https://new-haven-crime-data.herokuapp.com/).
 
-[![New Haven Crime](./images/crime_map.png)](https://new-haven-crime-data.herokuapp.com/)
+[![New Haven Crime](./images/crime_map.png | width=400)](https://new-haven-crime-data.herokuapp.com/)
 
-Tools to get and process the crime data in New Haven, CT as provided by the NHPD on their [website](https://www.newhavenct.gov/gov/depts/nhpd/compstat_reports.htm).
+---
+
+This repo contains the tools to get and process the crime data in New Haven, CT as provided by the NHPD on their [website](https://www.newhavenct.gov/gov/depts/nhpd/compstat_reports.htm).
 
 1. `raw_data` contains the code to get the raw data (in PDF form)
 2. `clean_data` contains the code to parse the PDFs and dump the raw major crime data into a CSV.  
@@ -12,5 +14,6 @@ Tools to get and process the crime data in New Haven, CT as provided by the NHPD
    The final, cleaned and geotagged data is in `crime_data_clean.csv`.
 3. `explore_data` has some scripts to look at trends in the data (work in progress).
 4. `crime_map` contains a script to plot the crime data in New Haven and filter by date. 
+
 
 
