@@ -2,7 +2,7 @@
 
 You can explore the New Haven crime data yourself with this [interactive crime map](https://new-haven-crime-data.herokuapp.com/).
 
-[![New Haven Crime](./images/crime_map.png) | width=400](https://new-haven-crime-data.herokuapp.com/)
+<a href="https://new-haven-crime-data.herokuapp.com/"><img align="center" alt="New Haven Crime" src="./images/crime_map.png" width="400" /></a>
 
 ---
 
