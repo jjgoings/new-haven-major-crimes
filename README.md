@@ -1,5 +1,9 @@
 # New Haven Crime Data 
 
+You can explore the New Haven crime data yourself with this [interactive crime map](https://new-haven-crime-data.herokuapp.com/).
+
+[![New Haven Crime](./images/crime_map.png)](https://new-haven-crime-data.herokuapp.com/)
+
 Tools to get and process the crime data in New Haven, CT as provided by the NHPD on their [website](https://www.newhavenct.gov/gov/depts/nhpd/compstat_reports.htm).
 
 1. `raw_data` contains the code to get the raw data (in PDF form)
