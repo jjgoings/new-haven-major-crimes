@@ -121,7 +121,7 @@ text = Paragraph(text="""
 width=200, height=100)
 
 attribution = Div(text="""
-Data from the <a href="https://www.newhavenct.gov/gov/depts/nhpd/compstat_reports.htm">New Haven Police Department</a>. Last updated 18 Apr 2020.
+Data from the <a href="https://www.newhavenct.gov/gov/depts/nhpd/compstat_reports.htm">New Haven Police Department</a>. Last updated 23 Apr 2020.
 """,
 width=800, height=20,style={'font-size': '80%', 'color': 'gray'})
 
